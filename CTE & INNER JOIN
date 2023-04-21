@@ -1,0 +1,40 @@
+Here is an SQL query with a common table expression:
+
+WITH total_revenue_country_cte (country, number_of_customers, number_of_movie_rentals, total_revenue) AS (		
+	SELECT	
+		F.country,
+		COUNT(DISTINCT B.customer_id) AS number_of_customers,
+		COUNT(DISTINCT B.rental_id) AS number_of_movie_rentals,
+		SUM(A.amount) AS total_revenue
+FROM payment A		
+INNER JOIN rental B ON B.rental_id = A.rental_id		
+INNER JOIN customer C ON C.customer_id = B.customer_id		
+INNER JOIN address D ON D.address_id = C.address_id		
+INNER JOIN city E ON E.city_id = D.city_id		
+INNER JOIN country F ON F.country_id = E.country_id		
+GROUP BY F.country		
+ORDER BY total_revenue DESC		
+),		
+rentals_per_customer_cte (customer_id, country, number_of_movie_rentals) AS (		
+	SELECT 	
+	A.customer_id, 	
+	E.country,	
+	COUNT(DISTINCT A.rental_id) AS number_of_movie_rentals	
+FROM rental	A	
+INNER JOIN customer B ON B.customer_id = A.customer_id		
+INNER JOIN address C ON C.address_id = B.address_id		
+INNER JOIN city D ON D.city_id = C.city_id		
+INNER JOIN country E ON E.country_id = D.country_id		
+GROUP BY A.customer_id, E.country		
+)		
+		
+SELECT 		
+	A.country,	
+	A.number_of_customers,	
+	ROUND(A.total_revenue/A.number_of_customers,2) AS average_revenue_per_customer,	
+	ROUND(AVG(B.number_of_movie_rentals),0) AS average_rentals_per_customer,	
+	A.total_revenue	
+FROM total_revenue_country_cte A		
+INNER JOIN rentals_per_customer_cte B ON B.country = A.country		
+GROUP BY A.country, number_of_customers, total_revenue		
+ORDER BY A.total_revenue DESC;		
