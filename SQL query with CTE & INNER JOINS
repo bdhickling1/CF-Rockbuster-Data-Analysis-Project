@@ -1,4 +1,4 @@
-Here is an SQL query with a common table expression:
+This is an example of an SQL query with a common table expression and inner joins to return Average rental payment and average number of rentals by customer by country:
 
 WITH total_revenue_country_cte (country, number_of_customers, number_of_movie_rentals, total_revenue) AS (		
 	SELECT	
