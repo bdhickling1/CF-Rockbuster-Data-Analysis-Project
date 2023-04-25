@@ -1,0 +1,13 @@
+An example of an SQL query that was used to return the film count and total revenue by filmn genre
+
+SELECT 	
+	D.name AS genre,
+	COUNT (A.rental_id) AS number_of_rentals, 
+	SUM (E.amount) AS total_revenue
+FROM rental A	
+INNER JOIN inventory B on A.inventory_id = B.inventory_id	
+INNER JOIN film_category C on B.film_id = C.film_id	
+INNER JOIN category D on C.category_id = D.category_id	
+INNER JOIN payment E ON A.rental_id = E.rental_id	
+GROUP BY name	
+ORDER BY total_revenue DESC;	
